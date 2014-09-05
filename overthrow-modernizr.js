@@ -1,24 +1,25 @@
-/*! Overthrow. An overflow:auto polyfill for responsive design. (c) 2012: Scott Jehl, Filament Group, Inc. http://filamentgroup.github.com/Overthrow/license.txt */
-(function( w, undefined ){
-	
-	var doc = w.document,
+/* 
+ * overthrow-modernizr
+ *
+ * Quick and dirty touch-based overflow:auto detection for Modernizr. Based upon the detection used in Overthrow,
+ * (http://filamentgroup.github.com/Overthrow) by Scott Jehl, Filament Group, Inc. 
+ *
+ * Original work (c) 2012: Scott Jehl, Filament Group, Inc. http://filamentgroup.github.com/Overthrow/license.txt 
+ */
+Modernizr.addTest('touch-overflowauto', function(){
+	var w = window,
+		doc = w.document,
 		docElem = doc.documentElement,
-		enabledClassName = "overthrow-enabled",
 
-		// Touch events are used in the polyfill, and thus are a prerequisite
-		canBeFilledWithPoly = "ontouchmove" in doc,
-		
 		// The following attempts to determine whether the browser has native overflow support
 		// so we can enable it but not polyfill
 		nativeOverflow = 
 			// Features-first. iOS5 overflow scrolling property check - no UA needed here. thanks Apple :)
 			"WebkitOverflowScrolling" in docElem.style ||
+
 			// Test the windows scrolling property as well
 			"msOverflowStyle" in docElem.style ||
-			// Touch events aren't supported and screen width is greater than X
-			// ...basically, this is a loose "desktop browser" check. 
-			// It may wrongly opt-in very large tablets with no touch support.
-			( !canBeFilledWithPoly && w.screen.width > 800 ) ||
+
 			// Hang on to your hats.
 			// Whitelist some popular, overflow-supporting mobile browsers for now and the future
 			// These browsers are known to get overlow support right, but give us no way of detecting it.
@@ -52,42 +53,5 @@
 				);
 			})();
 
-	// Expose overthrow API
-	w.overthrow = {};
-
-	w.overthrow.enabledClassName = enabledClassName;
-
-	w.overthrow.addClass = function(){
-		if( docElem.className.indexOf( w.overthrow.enabledClassName ) === -1 ){
-			docElem.className += " " + w.overthrow.enabledClassName;
-		}
-	};
-
-	w.overthrow.removeClass = function(){
-		docElem.className = docElem.className.replace( w.overthrow.enabledClassName, "" );
-	};
-
-	// Enable and potentially polyfill overflow
-	w.overthrow.set = function(){
-			
-		// If nativeOverflow or at least the element canBeFilledWithPoly, add a class to cue CSS that assumes overflow scrolling will work (setting height on elements and such)
-		if( nativeOverflow ){
-			w.overthrow.addClass();
-		}
-
-	};
-
-	// expose polyfillable 
-	w.overthrow.canBeFilledWithPoly = canBeFilledWithPoly;
-
-	// Destroy everything later. If you want to.
-	w.overthrow.forget = function(){
-
-		w.overthrow.removeClass();
-		
-	};
-		
-	// Expose overthrow API
-	w.overthrow.support = nativeOverflow ? "native" : "none";
-		
-})( this );
+		return nativeOverflow;
+});
